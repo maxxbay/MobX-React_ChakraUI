@@ -1,4 +1,5 @@
 import ProductForm from "./ProductForm/ProductForm"
+import ProductTable from "./ProductTable/ProductTable"
 
 function App() {
 
@@ -6,6 +7,7 @@ function App() {
   return (
     <>
       <ProductForm/>
+      <ProductTable/>
     </>
   )
 }
