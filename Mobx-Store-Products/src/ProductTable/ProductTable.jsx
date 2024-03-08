@@ -1,11 +1,11 @@
-import { Button, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Button, Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
 import { observer } from "mobx-react-lite";
 import ProductStore from "../store/ProductStore";
 
 
 const ProductTable = observer(() => { 
     return (
-
+      <Box mx="auto" maxW="80%" >
         <Table variant="simple">
             <Thead>
                 <Tr>
@@ -30,7 +30,7 @@ const ProductTable = observer(() => {
                 ))}
             </Tbody>
         </Table>
-     
+     </Box>
     )
 });
 

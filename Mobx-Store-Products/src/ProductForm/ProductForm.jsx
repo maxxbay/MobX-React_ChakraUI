@@ -28,16 +28,16 @@ const handleSubmit = (e) => {
 return (
     <SimpleGrid
   bg='gray.50'
-  columns={{ sm: 2, md: 4 }}
-  spacing='8'
+  columns={{ sm: 2, md: 2 }}
+  spacing='10'
   p='10'
   textAlign='center'
   rounded='lg'
   color='gray.600'
 >
-    <Box as="form" onSubmit={handleSubmit} p={4}>
+    <Box mx="auto" maxW="80%" as="form" onSubmit={handleSubmit} p={4}>
         <FormControl mt={4} isRequired>
-            <FormLabel>Name</FormLabel>
+            <FormLabel minWidth="200px" whiteSpace="nowrap">Name</FormLabel>
             <Input value={name} placeholder='Name' onChange={(e) => setName(e.target.value)}/>
         </FormControl>
            <FormControl mt={4} isRequired>
