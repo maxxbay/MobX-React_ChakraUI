@@ -36,15 +36,15 @@ return (
   color='gray.600'
 >
     <Box as="form" onSubmit={handleSubmit} p={4}>
-        <FormControl mt={4}>
+        <FormControl mt={4} isRequired>
             <FormLabel>Name</FormLabel>
             <Input value={name} placeholder='Name' onChange={(e) => setName(e.target.value)}/>
         </FormControl>
-           <FormControl mt={4}>
+           <FormControl mt={4} isRequired>
             <FormLabel>Price</FormLabel>
             <Input placeholder='Price' onChange={(e) => setPrice(e.target.value)} value={price} />
         </FormControl>
-           <FormControl mt={4}>
+           <FormControl mt={4} isRequired>
             <FormLabel>Description</FormLabel>
             <Input placeholder='Description'  onChange={(e) => setDescription(e.target.value)} value={description} />
         </FormControl>
