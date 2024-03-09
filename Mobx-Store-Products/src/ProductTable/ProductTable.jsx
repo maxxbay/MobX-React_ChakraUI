@@ -1,4 +1,4 @@
-import { Button, Box, Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react';
+import { Button, Box, Table, Tbody, Td, Th, Thead, Tr, Text } from '@chakra-ui/react';
 import { observer } from "mobx-react-lite";
 import ProductStore from "../store/ProductStore";
 
@@ -30,6 +30,9 @@ const ProductTable = observer(() => {
                 ))}
             </Tbody>
         </Table>
+            <Box mt={4}>
+          <Text>Total Products: {ProductStore.productCount}</Text>
+        </Box>
      </Box>
     )
 });

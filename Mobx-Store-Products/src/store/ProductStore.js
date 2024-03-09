@@ -1,4 +1,4 @@
-import {makeAutoObservable, action} from "mobx";
+import {makeAutoObservable, action, observable, computed} from "mobx";
 
 class ProductStore {
  
@@ -6,10 +6,12 @@ class ProductStore {
 
     constructor () { 
         makeAutoObservable(this, {
+      products: observable,
       addProduct: action,
       removeProduct: action,
       loadProducts: action,
-      saveProducts: action
+      saveProducts: action,
+      productCount: computed,
     });
         this.loadProducts();
     }
@@ -34,6 +36,10 @@ class ProductStore {
         this.products.splice(id, 1);
         this.saveProducts();
     }
+   
+    get productCount() {
+    return this.products.length;
+  }
 
 }
 
