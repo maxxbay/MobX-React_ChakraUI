@@ -1,6 +1,6 @@
 import { useState} from "react";
 import { observer } from "mobx-react-lite";
-import { Box, SimpleGrid, Button, FormControl, FormLabel, Input, useToast } from "@chakra-ui/react";
+import { Box, Button, FormControl, FormLabel, Input, Textarea, useToast } from "@chakra-ui/react";
 import ProductStore from "../store/ProductStore";
 
 const ProductForm = observer(() => {
@@ -26,16 +26,8 @@ const handleSubmit = (e) => {
 }
 
 return (
-    <SimpleGrid
-  bg='gray.50'
-  columns={{ sm: 2, md: 2 }}
-  spacing='10'
-  p='10'
-  textAlign='center'
-  rounded='lg'
-  color='gray.600'
->
-    <Box mx="auto" maxW="80%" as="form" onSubmit={handleSubmit} p={4}>
+
+    <Box mx="auto" minW="40%" as="form" onSubmit={handleSubmit} p={4}>
         <FormControl mt={4} isRequired>
             <FormLabel minWidth="200px" whiteSpace="nowrap">Name</FormLabel>
             <Input value={name} placeholder='Name' onChange={(e) => setName(e.target.value)}/>
@@ -46,11 +38,10 @@ return (
         </FormControl>
            <FormControl mt={4} isRequired>
             <FormLabel>Description</FormLabel>
-            <Input placeholder='Description'  onChange={(e) => setDescription(e.target.value)} value={description} />
+            <Textarea placeholder='Description'  onChange={(e) => setDescription(e.target.value)} value={description} />
         </FormControl>
         <Button mt={6} colorScheme='blue' type="submit">Add Product</Button>
     </Box>  
-    </SimpleGrid>
 )
 
 })

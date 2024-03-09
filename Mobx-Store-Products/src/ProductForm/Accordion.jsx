@@ -10,7 +10,7 @@ import ProductStore from "../store/ProductStore";
 
 const AccordionComp = observer(() => { 
     return (
-        <Box minWidth="400px">
+        <Box minW="40%" maxW="80%">
         <Accordion allowMultiple>
             {ProductStore.products.map((product, index) => (
                 <AccordionItem key={index}>

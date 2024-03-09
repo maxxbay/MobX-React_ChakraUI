@@ -5,7 +5,7 @@ import ProductStore from "../store/ProductStore";
 
 const ProductTable = observer(() => { 
     return (
-      <Box mx="auto" maxW="80%" >
+      <Box mx="auto" minW="40%" maxW="80%" >
         <Table variant="simple">
             <Thead>
                 <Tr>
