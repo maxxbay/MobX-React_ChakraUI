@@ -11,6 +11,7 @@ class ProductStore {
       removeProduct: action,
       loadProducts: action,
       saveProducts: action,
+      updateProduct: action,
       productCount: computed,
     });
         this.loadProducts();
@@ -36,10 +37,16 @@ class ProductStore {
         this.products.splice(id, 1);
         this.saveProducts();
     }
+    
+      updateProduct(index, updatedProduct) {
+      this.products[index] = { ...this.products[index], ...updatedProduct };
+      this.saveProducts();
+    }
    
     get productCount() {
     return this.products.length;
   }
+
 
 }
 
