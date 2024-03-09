@@ -1,11 +1,16 @@
-import {makeAutoObservable} from "mobx";
+import {makeAutoObservable, action} from "mobx";
 
 class ProductStore {
  
     products = [];
 
     constructor () { 
-        makeAutoObservable(this);
+        makeAutoObservable(this, {
+      addProduct: action,
+      removeProduct: action,
+      loadProducts: action,
+      saveProducts: action
+    });
         this.loadProducts();
     }
      loadProducts() {
