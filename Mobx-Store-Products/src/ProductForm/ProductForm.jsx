@@ -20,7 +20,7 @@ const handleSubmit = (e) => {
       title: 'Product added.',
       description: "We've added your product.",
       status: 'success',
-      duration: 9000,
+      duration: 2000,
       isClosable: true,
     })
 }

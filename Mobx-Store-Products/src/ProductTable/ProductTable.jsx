@@ -1,14 +1,29 @@
-import { Button, Box, Table, Tbody, Td, Th, Thead, Tr, Text, Input, Textarea } from '@chakra-ui/react';
+import { Button, Box, Table, Tbody, Td, Th, Thead, Tr, Text, Input, Textarea, useToast } from '@chakra-ui/react';
 import { observer } from "mobx-react-lite";
 import ProductStore from "../store/ProductStore";
 
 
 
 const ProductTable = observer(() => { 
+  const toast = useToast();
 
     const handleUpdate = (index, field, value) => {
     const updatedProduct = { ...ProductStore.products[index], [field]: value };
     ProductStore.updateProduct(index, updatedProduct);
+  };
+
+
+
+ const handleRemove = (index) => {
+    ProductStore.removeProduct(index);
+    toast({
+      title: "Product removed.",
+      description: "The product has been removed successfully.",
+      status: "error",
+      duration: 2000,
+      isClosable: true,
+      position: "bottom",
+    });
   };
 
     return (
@@ -31,10 +46,10 @@ const ProductTable = observer(() => {
                 <Input value={product.price} onChange={(e) => handleUpdate(index, "price", e.target.value)} />
               </Td>
               <Td>
-                <Textarea minW="50%" maxW="90%" value={product.description} onChange={(e) => handleUpdate(index, "description", e.target.value)} />
+                <Textarea minW="70%" maxW="90%" value={product.description} onChange={(e) => handleUpdate(index, "description", e.target.value)} />
               </Td>
               <Td>
-                <Button colorScheme="red" onClick={() => ProductStore.removeProduct(index)}>Remove</Button>
+                <Button colorScheme="red" onClick={() => handleRemove(index)}>Remove</Button>
               </Td>
             </Tr>
                 ))}
