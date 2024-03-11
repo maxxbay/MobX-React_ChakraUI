@@ -9,14 +9,15 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react';
-import ProductStore from '../store/ProductStore';
 import { v4 as uuidv4 } from 'uuid';
+import { useProductStore } from '../store/ProductStoreContext';
 
 const ProductForm = observer(() => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const toast = useToast();
+  const ProductStore = useProductStore();
 
   const handleSubmit = (e) => {
     e.preventDefault();

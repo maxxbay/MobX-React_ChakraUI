@@ -13,10 +13,11 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
-import ProductStore from '../store/ProductStore';
+import { useProductStore } from '../store/ProductStoreContext';
 
 const ProductTable = observer(() => {
   const toast = useToast();
+  const ProductStore = useProductStore();
 
   const handleUpdate = (id, field, value) => {
     const productIndex = ProductStore.products.findIndex(

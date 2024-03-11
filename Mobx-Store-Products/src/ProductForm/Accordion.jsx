@@ -7,9 +7,11 @@ import {
   Box,
 } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
-import ProductStore from '../store/ProductStore';
+import { useProductStore } from '../store/ProductStoreContext';
 
 const AccordionComp = observer(() => {
+  const ProductStore = useProductStore();
+
   return (
     <Box minW="40%" maxW="80%">
       <Accordion allowMultiple>
