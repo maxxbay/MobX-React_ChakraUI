@@ -4,33 +4,31 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
-  Box} from '@chakra-ui/react';
+  Box,
+} from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
-import ProductStore from "../store/ProductStore";
+import ProductStore from '../store/ProductStore';
 
-const AccordionComp = observer(() => { 
-    return (
-        <Box minW="40%" maxW="80%">
-        <Accordion allowMultiple>
-            {ProductStore.products.map((product, index) => (
-                <AccordionItem key={index}>
-                    <h2>
-                        <AccordionButton>
-                            <Box flex="1" textAlign="left">
-                                {product.name}
-                            </Box>
-                            <AccordionIcon />
-                        </AccordionButton>
-                    </h2>
-                    <AccordionPanel pb={4}>
-                        {product.description}
-                
-                    </AccordionPanel>
-                </AccordionItem>
-            ))}
-        </Accordion>
-        </Box>
-    );
+const AccordionComp = observer(() => {
+  return (
+    <Box minW="40%" maxW="80%">
+      <Accordion allowMultiple>
+        {ProductStore.products.map((product) => (
+          <AccordionItem key={product.id}>
+            <h2>
+              <AccordionButton>
+                <Box flex="1" textAlign="left">
+                  {product.name}
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+            </h2>
+            <AccordionPanel pb={4}>{product.description}</AccordionPanel>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </Box>
+  );
 });
 
 export default AccordionComp;
