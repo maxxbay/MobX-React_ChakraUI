@@ -8,26 +8,27 @@ import {
   Thead,
   Tr,
   Text,
-  Input,
-  Textarea,
   useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import { useProductStore } from '../store/ProductStoreContext';
+import ProductForm from '../ProductForm/ProductForm';
 
 const ProductTable = observer(() => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const ProductStore = useProductStore();
 
-  const handleUpdate = (id, field, value) => {
-    const productIndex = ProductStore.products.findIndex(
-      (product) => product.id === id
-    );
-    const updatedProduct = {
-      ...ProductStore.products[productIndex],
-      [field]: value,
-    };
-    ProductStore.updateProduct(productIndex, updatedProduct);
+  const handleEdit = (product) => {
+    ProductStore.setSelectedProduct(product);
+    onOpen();
   };
 
   const handleRemove = (id) => {
@@ -59,37 +60,16 @@ const ProductTable = observer(() => {
         <Tbody minW="100%">
           {ProductStore.products.map((product) => (
             <Tr key={product.id}>
+              <Td>{product.name}</Td>
+              <Td>{product.price}</Td>
+              <Td>{product.description}</Td>
               <Td>
-                <Input
-                  value={product.name}
-                  onChange={(e) =>
-                    handleUpdate(product.id, 'name', e.target.value)
-                  }
-                />
+                <Button colorScheme="blue" onClick={() => handleEdit(product)}>
+                  Edit
+                </Button>
               </Td>
               <Td>
-                <Input
-                  value={product.price}
-                  onChange={(e) =>
-                    handleUpdate(product.id, 'price', e.target.value)
-                  }
-                />
-              </Td>
-              <Td>
-                <Textarea
-                  minW="70%"
-                  maxW="90%"
-                  value={product.description}
-                  onChange={(e) =>
-                    handleUpdate(product.id, 'description', e.target.value)
-                  }
-                />
-              </Td>
-              <Td>
-                <Button
-                  colorScheme="red"
-                  onClick={() => handleRemove(product.id)}
-                >
+                <Button colorScheme="red" onClick={() => handleRemove(product)}>
                   Remove
                 </Button>
               </Td>
@@ -97,6 +77,23 @@ const ProductTable = observer(() => {
           ))}
         </Tbody>
       </Table>
+
+      <Modal
+        isOpen={isOpen}
+        onClose={() => {
+          onClose();
+          ProductStore.setSelectedProduct(null);
+        }}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Product</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <ProductForm />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
       <Box mt={4}>
         <Text>Total Products: {ProductStore.productCount}</Text>
       </Box>

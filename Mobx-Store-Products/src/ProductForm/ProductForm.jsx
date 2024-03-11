@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import {
   Box,
@@ -19,12 +19,36 @@ const ProductForm = observer(() => {
   const toast = useToast();
   const ProductStore = useProductStore();
 
+  useEffect(() => {
+    if (ProductStore.selectedProduct) {
+      setName(ProductStore.selectedProduct.name);
+      setPrice(ProductStore.selectedProduct.price);
+      setDescription(ProductStore.selectedProduct.description);
+    } else {
+      setName('');
+      setPrice('');
+      setDescription('');
+    }
+  }, [ProductStore.selectedProduct]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    ProductStore.addProduct({ id: uuidv4(), name, price, description });
-    setName('');
-    setDescription('');
-    setPrice('');
+    if (ProductStore.selectedProduct) {
+      ProductStore.updateProduct(ProductStore.selectedProduct.id, {
+        name,
+        price,
+        description,
+      });
+      toast({
+        title: 'Product updated.',
+        description: "We've updated your product.",
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+      });
+    } else {
+      ProductStore.addProduct({ id: uuidv4(), name, price, description });
+    }
     toast({
       title: 'Product added.',
       description: "We've added your product.",
@@ -32,6 +56,9 @@ const ProductForm = observer(() => {
       duration: 2000,
       isClosable: true,
     });
+    setName('');
+    setPrice('');
+    setDescription('');
   };
 
   return (
@@ -63,7 +90,7 @@ const ProductForm = observer(() => {
         />
       </FormControl>
       <Button mt={6} colorScheme="blue" type="submit">
-        Add Product
+        {ProductStore.selectedProduct ? 'Save' : 'Add Product'}
       </Button>
     </Box>
   );
