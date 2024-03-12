@@ -1,14 +1,7 @@
 import { observer } from 'mobx-react-lite';
-import {
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Input,
-  Textarea,
-  useToast,
-} from '@chakra-ui/react';
+import { Box, Button, useToast } from '@chakra-ui/react';
 import { useProductStore } from '../store/ProductStoreContext';
+import ProductFormField from './ProductFormField';
 
 const ProductForm = observer(() => {
   const toast = useToast();
@@ -40,32 +33,30 @@ const ProductForm = observer(() => {
 
   return (
     <Box mx="auto" minW="40%" as="form" onSubmit={handleSubmit} p={4}>
-      <FormControl mt={4} isRequired>
-        <FormLabel minWidth="200px" whiteSpace="nowrap">
-          Name
-        </FormLabel>
-        <Input
-          value={store.productDetails.name}
-          onChange={(e) => store.setProductName(e.target.value)}
-          placeholder="Name"
-        />
-      </FormControl>
-      <FormControl mt={4} isRequired>
-        <FormLabel>Price</FormLabel>
-        <Input
-          value={store.productDetails.price}
-          onChange={(e) => store.setProductPrice(e.target.value)}
-          placeholder="Price"
-        />
-      </FormControl>
-      <FormControl mt={4} isRequired>
-        <FormLabel>Description</FormLabel>
-        <Textarea
-          value={store.productDetails.description}
-          placeholder="Description"
-          onChange={(e) => store.setProductDescription(e.target.value)}
-        />
-      </FormControl>
+      <ProductFormField
+        label="Name"
+        value={store.productDetails.name}
+        onChange={(e) => store.setProductName(e.target.value)}
+        placeholder="Name"
+        isRequired
+        type="text"
+      />
+      <ProductFormField
+        label="Price"
+        value={store.productDetails.price}
+        onChange={(e) => store.setProductPrice(e.target.value)}
+        placeholder="Price"
+        isRequired
+        type="number"
+      />
+      <ProductFormField
+        label="Description"
+        value={store.productDetails.description}
+        onChange={(e) => store.setProductDescription(e.target.value)}
+        placeholder="Description"
+        isRequired
+        type="text"
+      />
       <Button mt={6} colorScheme="blue" type="submit">
         {store.selectedProduct ? 'Save' : 'Add Product'}
       </Button>
