@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import {
   Box,
@@ -9,36 +8,16 @@ import {
   Textarea,
   useToast,
 } from '@chakra-ui/react';
-import { v4 as uuidv4 } from 'uuid';
 import { useProductStore } from '../store/ProductStoreContext';
 
 const ProductForm = observer(() => {
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
-  const [description, setDescription] = useState('');
   const toast = useToast();
-  const ProductStore = useProductStore();
-
-  useEffect(() => {
-    if (ProductStore.selectedProduct) {
-      setName(ProductStore.selectedProduct.name);
-      setPrice(ProductStore.selectedProduct.price);
-      setDescription(ProductStore.selectedProduct.description);
-    } else {
-      setName('');
-      setPrice('');
-      setDescription('');
-    }
-  }, [ProductStore.selectedProduct]);
+  const store = useProductStore();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (ProductStore.selectedProduct) {
-      ProductStore.updateProduct(ProductStore.selectedProduct.id, {
-        name,
-        price,
-        description,
-      });
+    if (store.selectedProduct) {
+      store.updateProduct();
       toast({
         title: 'Product updated.',
         description: "We've updated your product.",
@@ -47,18 +26,16 @@ const ProductForm = observer(() => {
         isClosable: true,
       });
     } else {
-      ProductStore.addProduct({ id: uuidv4(), name, price, description });
+      store.addProduct();
+      toast({
+        title: 'Product added.',
+        description: "We've added your product.",
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+      });
     }
-    toast({
-      title: 'Product added.',
-      description: "We've added your product.",
-      status: 'success',
-      duration: 2000,
-      isClosable: true,
-    });
-    setName('');
-    setPrice('');
-    setDescription('');
+    store.selectedProduct = null;
   };
 
   return (
@@ -68,29 +45,29 @@ const ProductForm = observer(() => {
           Name
         </FormLabel>
         <Input
-          value={name}
+          value={store.productDetails.name}
+          onChange={(e) => store.setProductName(e.target.value)}
           placeholder="Name"
-          onChange={(e) => setName(e.target.value)}
         />
       </FormControl>
       <FormControl mt={4} isRequired>
         <FormLabel>Price</FormLabel>
         <Input
+          value={store.productDetails.price}
+          onChange={(e) => store.setProductPrice(e.target.value)}
           placeholder="Price"
-          onChange={(e) => setPrice(e.target.value)}
-          value={price}
         />
       </FormControl>
       <FormControl mt={4} isRequired>
         <FormLabel>Description</FormLabel>
         <Textarea
+          value={store.productDetails.description}
           placeholder="Description"
-          onChange={(e) => setDescription(e.target.value)}
-          value={description}
+          onChange={(e) => store.setProductDescription(e.target.value)}
         />
       </FormControl>
       <Button mt={6} colorScheme="blue" type="submit">
-        {ProductStore.selectedProduct ? 'Save' : 'Add Product'}
+        {store.selectedProduct ? 'Save' : 'Add Product'}
       </Button>
     </Box>
   );

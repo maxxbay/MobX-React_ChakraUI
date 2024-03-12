@@ -7,6 +7,8 @@ const ProductTableHeader = () => {
         <Th>Name</Th>
         <Th>Price</Th>
         <Th>Description</Th>
+        <Th>Editing</Th>
+        <Th>Deletion</Th>
       </Tr>
     </Thead>
   );

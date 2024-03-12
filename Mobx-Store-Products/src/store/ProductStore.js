@@ -4,6 +4,11 @@ import { v4 as uuidv4 } from 'uuid';
 class ProductStore {
   products = [];
   selectedProduct = null;
+  productDetails = {
+    name: '',
+    price: '',
+    description: '',
+  };
 
   constructor() {
     makeAutoObservable(this, {
@@ -16,6 +21,10 @@ class ProductStore {
       productCount: computed,
       selectedProduct: observable,
       setSelectedProduct: action,
+      resetProductDetails: action,
+      setProductName: observable,
+      setProductPrice: observable,
+      setProductDescription: observable,
     });
     this.loadProducts();
   }
@@ -28,31 +37,58 @@ class ProductStore {
     localStorage.setItem('products', JSON.stringify(this.products));
   }
 
-  addProduct(product) {
-    const newProduct = { ...product, id: uuidv4() };
+  addProduct() {
+    const newProduct = { id: uuidv4(), ...this.productDetails };
     this.products.push(newProduct);
     this.saveProducts();
+    this.resetProductDetails();
   }
 
   removeProduct(id) {
-    // this.products.splice(id, 1);
     this.products = this.products.filter((product) => product.id !== id);
     this.saveProducts();
   }
 
-  updateProduct(id, updatedProduct) {
-    const index = this.products.findIndex((product) => product.id === id);
-    if (index !== -1) {
-      this.products[index] = {
-        ...this.products[index],
-        ...updatedProduct,
-      };
-      this.saveProducts();
+  updateProduct() {
+    const product = this.selectedProduct;
+    if (product) {
+      const index = this.products.findIndex((p) => p.id === product.id);
+      if (index !== -1) {
+        this.products[index] = {
+          ...product,
+          ...this.productDetails,
+        };
+        this.saveProducts();
+      }
     }
+    this.resetProductDetails();
   }
 
   setSelectedProduct(product) {
     this.selectedProduct = product;
+    if (product) {
+      this.productDetails = { ...product };
+    } else {
+      this.resetProductDetails();
+    }
+  }
+
+  resetProductDetails() {
+    this.productDetails = {
+      name: '',
+      price: '',
+      description: '',
+    };
+  }
+
+  setProductName(name) {
+    this.productDetails.name = name;
+  }
+  setProductPrice(price) {
+    this.productDetails.price = price;
+  }
+  setProductDescription(description) {
+    this.productDetails.description = description;
   }
 
   get productCount() {
