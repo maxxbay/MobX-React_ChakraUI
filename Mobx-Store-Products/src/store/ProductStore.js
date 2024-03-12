@@ -35,15 +35,10 @@ class ProductStore {
   }
 
   removeProduct(id) {
-    this.products.splice(id, 1);
-    // this.products = this.products.filter((product) => product.id !== id);
+    // this.products.splice(id, 1);
+    this.products = this.products.filter((product) => product.id !== id);
     this.saveProducts();
   }
-
-  // updateProduct(index, updatedProduct) {
-  //   this.products[index] = { ...this.products[index], ...updatedProduct };
-  //   this.saveProducts();
-  // }
 
   updateProduct(id, updatedProduct) {
     const index = this.products.findIndex((product) => product.id === id);
