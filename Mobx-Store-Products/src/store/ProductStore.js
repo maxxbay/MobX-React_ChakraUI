@@ -52,12 +52,16 @@ class ProductStore {
   }
 
   updateProduct() {
+    if (!this.selectedProduct) {
+      return { success: false, message: 'No product selected.' };
+    }
+
     const index = this.products.findIndex(
       (p) => p.id === this.selectedProduct.id
     );
     if (index !== -1) {
       this.products[index] = {
-        ...this.selectedProduct,
+        ...this.products[index],
         ...this.productDetails,
       };
       this.saveProducts();
