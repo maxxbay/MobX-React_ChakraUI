@@ -1,16 +1,20 @@
-import { observer } from "mobx-react-lite";
-import { Box, Button } from "@chakra-ui/react";
-import { useProductStore } from "../store/ProductStoreContext";
-import { toastSuccess, toastError } from "./components/toasts";
-import { FormField } from "./FormField";
+import { observer } from 'mobx-react-lite';
+import { Box, Button } from '@chakra-ui/react';
+import { useProductStore } from '../store/ProductStoreContext';
+import { toastSuccess, toastError } from './components/toasts';
+import { FormField } from './FormField';
 
 const ProductForm = observer(() => {
   const { saveProduct } = useProductStore();
 
-  const handleClick = () => {
+  const handleClick = async () => {
     try {
-      saveProduct();
-      toastSuccess("We've updated your product.");
+      const response = saveProduct();
+      if (response.success) {
+        toastSuccess(response.message);
+      } else {
+        toastError(response.message);
+      }
     } catch (e) {
       toastError("We've got an error.");
     }

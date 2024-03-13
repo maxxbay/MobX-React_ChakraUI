@@ -22,9 +22,9 @@ class ProductStore {
       selectedProduct: observable,
       setSelectedProduct: action,
       resetProductDetails: action,
-      setProductName: observable,
-      setProductPrice: observable,
-      setProductDescription: observable,
+      updateProductDetails: action,
+      setProductDetail: action,
+      saveProduct: action,
     });
     this.loadProducts();
   }
@@ -36,41 +36,47 @@ class ProductStore {
   saveProducts() {
     localStorage.setItem('products', JSON.stringify(this.products));
   }
-
   addProduct() {
-    const newProduct = { id: uuidv4(), ...this.productDetails };
+    const newProduct = {
+      id: uuidv4(),
+      ...this.productDetails,
+    };
     this.products.push(newProduct);
     this.saveProducts();
     this.resetProductDetails();
+    return { success: true, message: 'Product added successfully.' };
   }
-
   removeProduct(id) {
     this.products = this.products.filter((product) => product.id !== id);
     this.saveProducts();
   }
 
   updateProduct() {
-    const product = this.selectedProduct;
-    if (product) {
-      const index = this.products.findIndex((p) => p.id === product.id);
-      if (index !== -1) {
-        this.products[index] = {
-          ...product,
-          ...this.productDetails,
-        };
-        this.saveProducts();
-      }
+    const index = this.products.findIndex(
+      (p) => p.id === this.selectedProduct.id
+    );
+    if (index !== -1) {
+      this.products[index] = {
+        ...this.selectedProduct,
+        ...this.productDetails,
+      };
+      this.saveProducts();
+      this.resetProductDetails();
+      this.selectedProduct = null;
+      return { success: true, message: 'Product updated successfully.' };
+    } else {
+      return { success: false, message: 'Product not found.' };
     }
-    this.resetProductDetails();
   }
-
   setSelectedProduct(product) {
     this.selectedProduct = product;
-    if (product) {
-      this.productDetails = { ...product };
-    } else {
-      this.resetProductDetails();
-    }
+    this.productDetails = product
+      ? { ...product }
+      : { name: '', price: '', description: '' };
+  }
+
+  setProductDetail(field, value) {
+    this.productDetails[field] = value;
   }
 
   resetProductDetails() {
@@ -81,16 +87,20 @@ class ProductStore {
     };
   }
 
-  setProductName(name) {
-    this.productDetails.name = name;
-  }
-  setProductPrice(price) {
-    this.productDetails.price = price;
-  }
-  setProductDescription(description) {
-    this.productDetails.description = description;
+  updateProductDetails(name, value) {
+    if (this.selectedProduct) {
+      this.selectedProduct[name] = value;
+    }
+    this.productDetails[name] = value;
   }
 
+  saveProduct() {
+    if (this.selectedProduct) {
+      return this.updateProduct();
+    } else {
+      return this.addProduct();
+    }
+  }
   get productCount() {
     return this.products.length;
   }

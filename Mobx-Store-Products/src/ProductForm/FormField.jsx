@@ -1,14 +1,13 @@
-/* eslint-disable react/prop-types */
-import { FormControl, FormLabel, Input, Textarea } from "@chakra-ui/react";
-import { useProductStore } from "../store/ProductStoreContext";
+import { observer } from 'mobx-react-lite';
+import { FormControl, FormLabel, Input, Textarea } from '@chakra-ui/react';
+import { useProductStore } from '../store/ProductStoreContext';
 
-const FormField = ({ name, label, type = "text", placeholder }) => {
+const FormField = observer(({ name, label, type = 'text', placeholder }) => {
   const store = useProductStore();
-  const { selectedProduct } = store;
-  const value = selectedProduct[name];
+  const value = store.productDetails[name];
 
-  const onChangeHandler = (name) => {
-    // TODO () => {}
+  const onChangeHandler = (e) => {
+    store.setProductDetail(name, e.target.value);
   };
 
   return (
@@ -16,22 +15,22 @@ const FormField = ({ name, label, type = "text", placeholder }) => {
       <FormLabel minWidth="200px" whiteSpace="nowrap">
         {label}
       </FormLabel>
-      {type === "textarea" ? (
+      {type === 'textarea' ? (
         <Textarea
-          value={value}
-          onChange={onChangeHandler(name)}
+          value={value || ''}
+          onChange={onChangeHandler}
           placeholder={placeholder}
         />
       ) : (
         <Input
           type={type}
-          value={value}
-          onChange={onChangeHandler(name)}
+          value={value || ''}
+          onChange={onChangeHandler}
           placeholder={placeholder}
         />
       )}
     </FormControl>
   );
-};
+});
 
 export default FormField;
