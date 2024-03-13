@@ -21,7 +21,7 @@ const ProductForm = observer(() => {
   };
 
   return (
-    <Box as="form" mx="auto" minW="40%" p={4} onSubmit={handleSubmit}>
+    <Box as="form" mx="auto" minW="40%" p={4}>
       <FormField name="name" label="Name" placeholder="Name" type="text" />
       <FormField name="price" label="Price" placeholder="Price" type="number" />
       <FormField
