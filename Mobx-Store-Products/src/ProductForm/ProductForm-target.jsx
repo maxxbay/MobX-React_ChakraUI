@@ -7,16 +7,12 @@ import { FormField } from './FormField';
 const ProductForm = observer(() => {
   const { saveProduct } = useProductStore();
 
-  const handleClick = async () => {
-    try {
-      const response = saveProduct();
-      if (response.success) {
-        toastSuccess(response.message);
-      } else {
-        toastError(response.message);
-      }
-    } catch (e) {
-      toastError("We've got an error.");
+  const handleClick = () => {
+    const response = saveProduct();
+    if (response.success) {
+      toastSuccess(response.message);
+    } else {
+      toastError(response.message);
     }
   };
 
