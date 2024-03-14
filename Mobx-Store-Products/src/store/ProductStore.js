@@ -99,6 +99,14 @@ class ProductStore {
   }
 
   saveProduct() {
+    if (
+      !this.productDetails.name ||
+      !this.productDetails.price ||
+      !this.productDetails.description
+    ) {
+      return { success: false, message: 'All fields are required.' };
+    }
+
     if (this.selectedProduct) {
       return this.updateProduct();
     } else {
