@@ -52,14 +52,22 @@ class ProductStore {
   }
 
   updateProduct() {
-    if (!this.selectedProduct) {
-      return { success: false, message: 'No product selected.' };
-    }
+    // if (!this.selectedProduct) {
+    //   return { success: false, message: 'No product selected.' };
+    // }
 
     const index = this.products.findIndex(
       (p) => p.id === this.selectedProduct.id
     );
     if (index !== -1) {
+      const isChanged = Object.keys(this.productDetails).some(
+        (key) => this.products[index][key] !== this.productDetails[key]
+      );
+
+      if (!isChanged) {
+        return { success: false, message: 'No changes detected.' };
+      }
+
       this.products[index] = {
         ...this.products[index],
         ...this.productDetails,
@@ -72,6 +80,7 @@ class ProductStore {
       return { success: false, message: 'Product not found.' };
     }
   }
+
   setSelectedProduct(product) {
     this.selectedProduct = product;
     this.productDetails = product
