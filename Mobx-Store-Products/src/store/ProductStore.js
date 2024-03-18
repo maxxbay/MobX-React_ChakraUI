@@ -4,22 +4,20 @@ import { v4 as uuidv4 } from 'uuid';
 class ProductStore {
   products = [];
   selectedProduct = null;
-  productDetails = {};
 
   constructor() {
     makeAutoObservable(this, {
       products: observable,
       loadProducts: action,
       saveProducts: action,
-      resetProductDetails: action,
+      clearSelectedProduct: action,
       addProduct: action,
+      resetProductDetails: action,
       removeProduct: action,
       updateProduct: action,
-      productCount: computed,
       selectedProduct: observable,
+      productCount: computed,
       setSelectedProduct: action,
-      saveProduct: action,
-      setProductDetail: action,
     });
     this.loadProducts();
   }
@@ -33,19 +31,18 @@ class ProductStore {
     localStorage.setItem('products', JSON.stringify(this.products));
   }
 
-  resetProductDetails() {
+  clearSelectedProduct() {
     this.selectedProduct = null;
-    this.productDetails = {};
   }
 
+  resetProductDetails() {
+    this.setSelectedProduct({ name: '', price: '', description: '' });
+  }
   addProduct(productDetails) {
-    const newProduct = {
-      id: uuidv4(),
-      ...productDetails,
-    };
+    const newProduct = { id: uuidv4(), ...productDetails };
     this.products.push(newProduct);
     this.saveProducts();
-    this.resetProductDetails();
+    this.clearSelectedProduct();
     return { success: true, message: 'Product added successfully.' };
   }
 
@@ -54,63 +51,19 @@ class ProductStore {
     this.saveProducts();
   }
 
-  updateProduct(productDetails) {
-    if (!this.selectedProduct) {
-      return { success: false, message: 'No product selected for updating.' };
+  updateProduct(id, updatedDetails) {
+    const index = this.products.findIndex((product) => product.id === id);
+    if (index !== -1) {
+      this.products[index] = { ...this.products[index], ...updatedDetails };
+      this.saveProducts();
+      this.clearSelectedProduct();
+      return { success: true, message: 'Product updated successfully.' };
     }
-
-    const productIndex = this.products.findIndex(
-      (product) => product.id === this.selectedProduct.id
-    );
-    if (productIndex === -1) {
-      return { success: false, message: 'Product not found.' };
-    }
-
-    const isChanged = Object.keys(productDetails).some(
-      (key) => this.products[productIndex][key] !== productDetails[key]
-    );
-    if (!isChanged) {
-      return {
-        success: false,
-        message:
-          'No changes detected. To save changes, modify the details first.',
-      };
-    }
-
-    this.products[productIndex] = {
-      ...this.products[productIndex],
-      ...productDetails,
-    };
-    this.saveProducts();
-    this.resetProductDetails();
-    return { success: true, message: 'Product updated successfully.' };
-  }
-  setProductDetail(field, value) {
-    this.productDetails[field] = value;
+    return { success: false, message: 'Product not found.' };
   }
 
   setSelectedProduct(product) {
-    this.selectedProduct = product;
-    if (product) {
-      this.productDetails = { ...product };
-    } else {
-      this.productDetails = {};
-    }
-  }
-  saveProduct(productDetails) {
-    const fieldsRequired = ['name', 'price', 'description']; // Update as necessary
-    const hasAllFields = fieldsRequired.every(
-      (field) => field in productDetails
-    );
-    if (!hasAllFields) {
-      return { success: false, message: 'All fields are required.' };
-    }
-
-    if (this.selectedProduct) {
-      return this.updateProduct(productDetails);
-    } else {
-      return this.addProduct(productDetails);
-    }
+    this.selectedProduct = product ? { ...product } : null;
   }
 
   get productCount() {
