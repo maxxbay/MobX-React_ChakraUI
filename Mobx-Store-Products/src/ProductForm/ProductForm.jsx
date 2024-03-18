@@ -7,9 +7,13 @@ import FormField from './FormField';
 const ProductForm = observer(() => {
   const store = useProductStore();
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const formProps = Object.fromEntries(formData);
+
     try {
-      const response = store.saveProduct();
+      const response = store.saveProduct(formProps);
       if (response.success) {
         toastSuccess(response.message);
       } else {
@@ -21,7 +25,7 @@ const ProductForm = observer(() => {
   };
 
   return (
-    <Box as="form" mx="auto" minW="40%" p={4}>
+    <Box as="form" mx="auto" minW="40%" p={4} onSubmit={handleSubmit}>
       <FormField name="name" label="Name" placeholder="Name" type="text" />
       <FormField name="price" label="Price" placeholder="Price" type="number" />
       <FormField
@@ -30,7 +34,7 @@ const ProductForm = observer(() => {
         placeholder="Description"
         type="textarea"
       />
-      <Button mt={6} colorScheme="blue" onClick={handleSubmit}>
+      <Button mt={6} colorScheme="blue" type="submit">
         {store.selectedProduct ? 'Update' : 'Save'}
       </Button>
     </Box>

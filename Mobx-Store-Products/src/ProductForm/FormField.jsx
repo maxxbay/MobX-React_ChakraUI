@@ -4,7 +4,7 @@ import { useProductStore } from '../store/ProductStoreContext';
 
 const FormField = observer(({ name, label, type = 'text', placeholder }) => {
   const store = useProductStore();
-  const value = store.productDetails[name];
+  const value = store.productDetails[name] || '';
 
   const onChangeHandler = (e) => {
     store.setProductDetail(name, e.target.value);
@@ -17,14 +17,16 @@ const FormField = observer(({ name, label, type = 'text', placeholder }) => {
       </FormLabel>
       {type === 'textarea' ? (
         <Textarea
-          value={value || ''}
+          name={name}
+          value={value}
           onChange={onChangeHandler}
           placeholder={placeholder}
         />
       ) : (
         <Input
+          name={name}
           type={type}
-          value={value || ''}
+          value={value}
           onChange={onChangeHandler}
           placeholder={placeholder}
         />
