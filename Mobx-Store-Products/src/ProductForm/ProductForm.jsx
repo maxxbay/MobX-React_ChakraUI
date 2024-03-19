@@ -34,10 +34,15 @@ const ProductForm = observer(() => {
         response = await store.addProduct(store.selectedProduct);
       }
 
-      response && response.success
-        ? toastSuccess(response.message)
-        : toastError(response.message);
-      store.resetProductDetails();
+      if (response && response.success) {
+        toastSuccess(response.message);
+        store.resetProductDetails();
+      } else if (
+        !response.success &&
+        response.message !== 'No changes detected. The product was not updated.'
+      ) {
+        toastError(response.message);
+      }
     } catch (error) {
       toastError('An error occurred.');
     }

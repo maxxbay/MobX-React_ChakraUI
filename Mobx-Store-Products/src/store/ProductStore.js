@@ -1,5 +1,6 @@
 import { makeAutoObservable, action, observable, computed } from 'mobx';
 import { v4 as uuidv4 } from 'uuid';
+import { toastError } from '../toastUtils';
 
 class ProductStore {
   products = [];
@@ -22,15 +23,31 @@ class ProductStore {
     this.loadProducts();
   }
 
+  // loadProducts() {
+  //   const savedProducts = localStorage.getItem('products');
+  //   this.products = savedProducts ? JSON.parse(savedProducts) : [];
+  // }
+
   loadProducts() {
-    const savedProducts = localStorage.getItem('products');
-    this.products = savedProducts ? JSON.parse(savedProducts) : [];
+    try {
+      const savedProducts = localStorage.getItem('products');
+      this.products = savedProducts ? JSON.parse(savedProducts) : [];
+    } catch (error) {
+      toastError(`Loading products failed: ${error.message}`);
+    }
   }
+
+  // saveProducts() {
+  //   localStorage.setItem('products', JSON.stringify(this.products));
+  // }
 
   saveProducts() {
-    localStorage.setItem('products', JSON.stringify(this.products));
+    try {
+      localStorage.setItem('products', JSON.stringify(this.products));
+    } catch (error) {
+      toastError(`Saving products failed: ${error.message}`);
+    }
   }
-
   clearSelectedProduct() {
     this.selectedProduct = null;
   }
@@ -50,10 +67,20 @@ class ProductStore {
     this.products = this.products.filter((product) => product.id !== id);
     this.saveProducts();
   }
-
   updateProduct(id, updatedDetails) {
     const index = this.products.findIndex((product) => product.id === id);
     if (index !== -1) {
+      const isChanged = Object.keys(updatedDetails).some(
+        (key) => this.products[index][key] !== updatedDetails[key]
+      );
+      if (!isChanged) {
+        toastError('No changes detected. The product was not updated.');
+        return {
+          success: false,
+          message: 'No changes detected. The product was not updated.',
+        };
+      }
+
       this.products[index] = { ...this.products[index], ...updatedDetails };
       this.saveProducts();
       this.clearSelectedProduct();
