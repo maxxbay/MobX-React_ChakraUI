@@ -5,11 +5,13 @@ import { toastError } from "../toastUtils";
 import FormField from "./FormField";
 
 const ProductForm = observer(() => {
-  const { selectedProduct, saveProduct, hasChanges } = useProductStore();
+  const store = useProductStore();
 
   const validateForm = () => {
     const requiredFields = ["name", "price", "description"];
-    const isValid = requiredFields.every((field) => selectedProduct[field]);
+    const isValid = requiredFields.every(
+      (field) => store.selectedProduct?.[field]
+    );
     !isValid && toastError("Please fill in all fields");
     return isValid;
   };
@@ -18,13 +20,13 @@ const ProductForm = observer(() => {
     e.preventDefault();
     const isFormValid = validateForm();
     if (isFormValid) {
-      saveProduct();
+      store.saveProduct();
     }
   };
 
   const formFieldNames = ["name", "price", "description"];
-  const formHasChanges = hasChanges();
-  const isUpdate = selectedProduct?.id ? "Update" : "Save";
+  const formHasChanges = store.hasChanges();
+  const isUpdate = store.selectedProduct?.id ? "Update" : "Save";
 
   return (
     <Box as="form" mx="auto" minW="40%" p={4} onSubmit={handleSubmit}>

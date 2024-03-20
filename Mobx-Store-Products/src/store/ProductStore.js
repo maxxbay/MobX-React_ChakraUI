@@ -31,9 +31,11 @@ class ProductStore {
 
   hasChanges() {
     const index = this.getProductIndex();
-    const isChanged = Object.keys(this.selectedProduct).some(
-      (key) => this.products[index][key] !== this.selectedProduct[key]
-    );
+    const isChanged =
+      this?.selectedProduct &&
+      Object.keys(this.selectedProduct).some(
+        (key) => this.products[index][key] !== this.selectedProduct[key]
+      );
     return isChanged;
   }
 
@@ -73,9 +75,9 @@ class ProductStore {
 
   updateProduct() {
     const index = this.getProductIndex();
+    this.products[index] = { ...this.products[index], ...this.selectedProduct };
     this.saveProducts();
     this.clearSelectedProduct();
-    this.products[index] = { ...this.products[index], ...this.selectedProduct };
     toastSuccess(`Product updated successfully.`);
   }
 

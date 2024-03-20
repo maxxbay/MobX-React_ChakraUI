@@ -3,12 +3,15 @@ import { useProductStore } from "../store/ProductStoreContext";
 import { FormControl, FormLabel, Input, Textarea } from "@chakra-ui/react";
 
 const FormField = observer(({ name, label, type, placeholder }) => {
-  const { selectedProduct, setSelectedProduct } = useProductStore();
+  const store = useProductStore();
 
-  const value = selectedProduct[name];
+  const value = store.selectedProduct?.[name];
 
-  const handleChange = (value) => {
-    setSelectedProduct({ ...selectedProduct, [name]: value });
+  const handleChange = (ev) => {
+    store.setSelectedProduct({
+      ...store.selectedProduct,
+      [name]: ev.currentTarget.value,
+    });
   };
 
   return (
