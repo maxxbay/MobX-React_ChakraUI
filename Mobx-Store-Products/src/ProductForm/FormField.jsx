@@ -1,11 +1,11 @@
-import { observer } from "mobx-react-lite";
-import { useProductStore } from "../store/ProductStoreContext";
-import { FormControl, FormLabel, Input, Textarea } from "@chakra-ui/react";
+import { observer } from 'mobx-react-lite';
+import { useProductStore } from '../store/ProductStoreContext';
+import { FormControl, FormLabel, Input, Textarea } from '@chakra-ui/react';
 
 const FormField = observer(({ name, label, type, placeholder }) => {
   const store = useProductStore();
 
-  const value = store.selectedProduct?.[name];
+  const value = store.selectedProduct?.[name] ?? '';
 
   const handleChange = (ev) => {
     store.setSelectedProduct({
@@ -19,7 +19,7 @@ const FormField = observer(({ name, label, type, placeholder }) => {
       <FormLabel minWidth="200px" whiteSpace="nowrap">
         {label}
       </FormLabel>
-      {type === "textarea" ? (
+      {type === 'textarea' ? (
         <Textarea
           name={name}
           value={value}

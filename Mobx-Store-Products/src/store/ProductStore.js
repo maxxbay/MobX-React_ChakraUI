@@ -1,6 +1,6 @@
-import { makeAutoObservable, action, observable, computed } from "mobx";
-import { v4 as uuidv4 } from "uuid";
-import { toastError, toastSuccess } from "../toastUtils";
+import { makeAutoObservable, action, observable, computed } from 'mobx';
+import { v4 as uuidv4 } from 'uuid';
+import { toastError, toastSuccess } from '../toastUtils';
 
 class ProductStore {
   products = [];
@@ -31,17 +31,16 @@ class ProductStore {
 
   hasChanges() {
     const index = this.getProductIndex();
-    const isChanged =
-      this?.selectedProduct &&
-      Object.keys(this.selectedProduct).some(
-        (key) => this.products[index][key] !== this.selectedProduct[key]
-      );
+    if (index === -1 || !this.selectedProduct) return false;
+    const isChanged = Object.keys(this.selectedProduct).some((key) => {
+      return this.products[index][key] !== this.selectedProduct[key];
+    });
     return isChanged;
   }
 
   loadProducts() {
     try {
-      const savedProducts = localStorage.getItem("products");
+      const savedProducts = localStorage.getItem('products');
       this.products = savedProducts ? JSON.parse(savedProducts) : [];
     } catch (error) {
       toastError(`Loading products failed: ${error.message}`);
@@ -50,7 +49,7 @@ class ProductStore {
 
   saveProducts() {
     try {
-      localStorage.setItem("products", JSON.stringify(this.products));
+      localStorage.setItem('products', JSON.stringify(this.products));
     } catch (error) {
       toastError(`Saving products failed: ${error.message}`);
     }
@@ -67,9 +66,9 @@ class ProductStore {
 
   addProduct(productDetails) {
     const newProduct = { id: uuidv4(), ...productDetails };
+    this.products.push(newProduct);
     this.saveProducts();
     this.clearSelectedProduct();
-    this.products.push(newProduct);
     toastSuccess(`Product added successfully.`);
   }
 
@@ -81,12 +80,22 @@ class ProductStore {
     toastSuccess(`Product updated successfully.`);
   }
 
-  saveProduct() {
-    if (this.selectedProduct.id) {
-      this.updateProduct();
+  saveProduct(productDetails) {
+    const index = this.products.findIndex(
+      (product) => product.id === this.selectedProduct?.id
+    );
+
+    if (index !== -1) {
+      this.products[index] = { ...this.products[index], ...productDetails };
+      toastSuccess(`Product updated successfully.`);
     } else {
-      this.addProduct();
+      const newProduct = { id: uuidv4(), ...productDetails };
+      this.products.push(newProduct);
+      toastSuccess(`Product added successfully.`);
     }
+
+    this.saveProducts();
+    this.clearSelectedProduct();
   }
 
   setSelectedProduct(product) {

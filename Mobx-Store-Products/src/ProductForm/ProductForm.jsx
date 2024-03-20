@@ -1,32 +1,32 @@
-import { observer } from "mobx-react-lite";
-import { Box, Button } from "@chakra-ui/react";
-import { useProductStore } from "../store/ProductStoreContext";
-import { toastError } from "../toastUtils";
-import FormField from "./FormField";
+import { observer } from 'mobx-react-lite';
+import { Box, Button } from '@chakra-ui/react';
+import { useProductStore } from '../store/ProductStoreContext';
+import { toastError } from '../toastUtils';
+import FormField from './FormField';
 
 const ProductForm = observer(() => {
   const store = useProductStore();
 
   const validateForm = () => {
-    const requiredFields = ["name", "price", "description"];
+    const requiredFields = ['name', 'price', 'description'];
     const isValid = requiredFields.every(
       (field) => store.selectedProduct?.[field]
     );
-    !isValid && toastError("Please fill in all fields");
+    !isValid && toastError('Please fill in all fields');
     return isValid;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const isFormValid = validateForm();
-    if (isFormValid) {
-      store.saveProduct();
+    if (isFormValid && store.selectedProduct) {
+      store.saveProduct(store.selectedProduct);
     }
   };
 
-  const formFieldNames = ["name", "price", "description"];
+  const formFieldNames = ['name', 'price', 'description'];
   const formHasChanges = store.hasChanges();
-  const isUpdate = store.selectedProduct?.id ? "Update" : "Save";
+  const isUpdate = Boolean(store.selectedProduct?.id);
 
   return (
     <Box as="form" mx="auto" minW="40%" p={4} onSubmit={handleSubmit}>
@@ -36,7 +36,7 @@ const ProductForm = observer(() => {
           name={field}
           label={field.charAt(0).toUpperCase() + field.slice(1)}
           placeholder={`Enter ${field}`}
-          type={field === "description" ? "textarea" : "text"}
+          type={field === 'description' ? 'textarea' : 'text'}
         />
       ))}
       <Button
@@ -45,7 +45,7 @@ const ProductForm = observer(() => {
         type="submit"
         disabled={!formHasChanges}
       >
-        {isUpdate ? "Update" : "Save"}
+        {isUpdate ? 'Update' : 'Save'}
       </Button>
     </Box>
   );
