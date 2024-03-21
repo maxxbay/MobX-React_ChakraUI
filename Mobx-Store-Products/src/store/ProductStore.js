@@ -38,25 +38,17 @@ class ProductStore {
     return isChanged;
   }
 
-  // loadProducts() {
-  //   try {
-  //     const savedProducts = localStorage.getItem('products');
-  //     this.products = savedProducts ? JSON.parse(savedProducts) : [];
-  //   } catch (error) {
-  //     toastError(`Loading products failed: ${error.message}`);
-  //   }
-  // }
-
   loadProducts = async () => {
     try {
       const response = await fetch('https://fakestoreapi.com/products');
       const data = await response.json();
       this.products = data
-        .map(({ id, title, price, description }) => ({
+        .map(({ id, title, price, description, category }) => ({
           id,
           name: title,
           price,
           description,
+          category,
         }))
         .sort((a, b) => b.id - a.id);
     } catch (error) {

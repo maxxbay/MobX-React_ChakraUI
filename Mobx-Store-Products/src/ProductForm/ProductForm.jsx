@@ -25,7 +25,7 @@ const ProductForm = observer(({ onClose }) => {
     }
   };
 
-  const formFieldNames = ['name', 'price', 'description'];
+  const formFieldNames = ['name', 'price', 'category', 'description'];
   const formHasChanges = store.hasChanges();
   const isUpdate = Boolean(store.selectedProduct?.id);
 
