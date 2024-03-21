@@ -38,14 +38,31 @@ class ProductStore {
     return isChanged;
   }
 
-  loadProducts() {
+  // loadProducts() {
+  //   try {
+  //     const savedProducts = localStorage.getItem('products');
+  //     this.products = savedProducts ? JSON.parse(savedProducts) : [];
+  //   } catch (error) {
+  //     toastError(`Loading products failed: ${error.message}`);
+  //   }
+  // }
+
+  loadProducts = async () => {
     try {
-      const savedProducts = localStorage.getItem('products');
-      this.products = savedProducts ? JSON.parse(savedProducts) : [];
+      const response = await fetch('https://fakestoreapi.com/products');
+      const data = await response.json();
+      this.products = data
+        .map(({ id, title, price, description }) => ({
+          id,
+          name: title,
+          price,
+          description,
+        }))
+        .sort((a, b) => b.id - a.id);
     } catch (error) {
-      toastError(`Loading products failed: ${error.message}`);
+      toastError(`Loading products from API failed: ${error.message}`);
     }
-  }
+  };
 
   saveProducts() {
     try {
