@@ -29,7 +29,7 @@ const ProductTable = observer(() => {
           ProductStore.setSelectedProduct(null);
         }}
       >
-        <ModalEditProduct />
+        <ModalEditProduct onClose={onClose} />
       </ModalOfProduct>
 
       <ProductTableFooter />

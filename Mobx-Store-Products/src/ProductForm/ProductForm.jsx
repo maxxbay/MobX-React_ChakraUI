@@ -4,7 +4,7 @@ import { useProductStore } from '../store/ProductStoreContext';
 import { toastError } from '../toastUtils';
 import FormField from './FormField';
 
-const ProductForm = observer(() => {
+const ProductForm = observer(({ onClose }) => {
   const store = useProductStore();
 
   const validateForm = () => {
@@ -21,6 +21,7 @@ const ProductForm = observer(() => {
     const isFormValid = validateForm();
     if (isFormValid && store.selectedProduct) {
       store.saveProduct(store.selectedProduct);
+      onClose();
     }
   };
 
