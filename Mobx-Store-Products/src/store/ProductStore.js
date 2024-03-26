@@ -1,47 +1,67 @@
 import { makeAutoObservable, action, observable, computed } from 'mobx';
 import { v4 as uuidv4 } from 'uuid';
+import { toastError, toastSuccess } from '../toastUtils';
 
 class ProductStore {
   products = [];
   selectedProduct = null;
-  productDetails = {
-    name: '',
-    price: '',
-    description: '',
-  };
 
   constructor() {
     makeAutoObservable(this, {
       products: observable,
-      addProduct: action,
-      removeProduct: action,
       loadProducts: action,
       saveProducts: action,
-      updateProduct: action,
-      productCount: computed,
-      selectedProduct: observable,
-      setSelectedProduct: action,
+      clearSelectedProduct: action,
+      addProduct: action,
       resetProductDetails: action,
-      setProductName: observable,
-      setProductPrice: observable,
-      setProductDescription: observable,
+      removeProduct: action,
+      updateProduct: action,
+      selectedProduct: observable,
+      productCount: computed,
+      setSelectedProduct: action,
     });
     this.loadProducts();
   }
-  loadProducts() {
-    const savedProducts = localStorage.getItem('products');
-    this.products = savedProducts ? JSON.parse(savedProducts) : [];
+
+  getProductIndex() {
+    return this.products.findIndex(
+      (product) => product.id === this.selectedProduct?.id
+    );
   }
+
+  hasChanges() {
+    const index = this.getProductIndex();
+    if (index === -1 || !this.selectedProduct) return false;
+    const isChanged = Object.keys(this.selectedProduct).some((key) => {
+      return this.products[index][key] !== this.selectedProduct[key];
+    });
+    return isChanged;
+  }
+
+  loadProducts = async () => {
+    try {
+      const response = await fetch('https://fakestoreapi.com/products');
+      const data = await response.json();
+      this.products = data
+        .map(({ id, title, price, description, category }) => ({
+          id,
+          name: title,
+          price,
+          description,
+          category,
+        }))
+        .sort((a, b) => b.id - a.id);
+    } catch (error) {
+      toastError(`Loading products from API failed: ${error.message}`);
+    }
+  };
 
   saveProducts() {
-    localStorage.setItem('products', JSON.stringify(this.products));
-  }
-
-  addProduct() {
-    const newProduct = { id: uuidv4(), ...this.productDetails };
-    this.products.push(newProduct);
-    this.saveProducts();
-    this.resetProductDetails();
+    try {
+      localStorage.setItem('products', JSON.stringify(this.products));
+    } catch (error) {
+      toastError(`Saving products failed: ${error.message}`);
+    }
   }
 
   removeProduct(id) {
@@ -49,46 +69,46 @@ class ProductStore {
     this.saveProducts();
   }
 
+  clearSelectedProduct() {
+    this.selectedProduct = null;
+  }
+
+  addProduct(productDetails) {
+    const newProduct = { id: uuidv4(), ...productDetails };
+    this.products.push(newProduct);
+    this.saveProducts();
+    this.clearSelectedProduct();
+    toastSuccess(`Product added successfully.`);
+  }
+
   updateProduct() {
-    const product = this.selectedProduct;
-    if (product) {
-      const index = this.products.findIndex((p) => p.id === product.id);
-      if (index !== -1) {
-        this.products[index] = {
-          ...product,
-          ...this.productDetails,
-        };
-        this.saveProducts();
-      }
+    const index = this.getProductIndex();
+    this.products[index] = { ...this.products[index], ...this.selectedProduct };
+    this.saveProducts();
+    this.clearSelectedProduct();
+    toastSuccess(`Product updated successfully.`);
+  }
+
+  saveProduct(productDetails) {
+    const index = this.products.findIndex(
+      (product) => product.id === this.selectedProduct?.id
+    );
+
+    if (index !== -1) {
+      this.products[index] = { ...this.products[index], ...productDetails };
+      toastSuccess(`Product updated successfully.`);
+    } else {
+      const newProduct = { id: uuidv4(), ...productDetails };
+      this.products.push(newProduct);
+      toastSuccess(`Product added successfully.`);
     }
-    this.resetProductDetails();
+
+    this.saveProducts();
+    this.clearSelectedProduct();
   }
 
   setSelectedProduct(product) {
-    this.selectedProduct = product;
-    if (product) {
-      this.productDetails = { ...product };
-    } else {
-      this.resetProductDetails();
-    }
-  }
-
-  resetProductDetails() {
-    this.productDetails = {
-      name: '',
-      price: '',
-      description: '',
-    };
-  }
-
-  setProductName(name) {
-    this.productDetails.name = name;
-  }
-  setProductPrice(price) {
-    this.productDetails.price = price;
-  }
-  setProductDescription(description) {
-    this.productDetails.description = description;
+    this.selectedProduct = product ? { ...product } : null;
   }
 
   get productCount() {

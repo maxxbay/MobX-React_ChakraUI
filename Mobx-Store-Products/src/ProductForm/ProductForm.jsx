@@ -1,64 +1,52 @@
 import { observer } from 'mobx-react-lite';
-import { Box, Button, useToast } from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 import { useProductStore } from '../store/ProductStoreContext';
-import ProductFormField from './ProductFormField';
+import { toastError } from '../toastUtils';
+import FormField from './FormField';
 
-const ProductForm = observer(() => {
-  const toast = useToast();
+const ProductForm = observer(({ onClose = () => {} }) => {
   const store = useProductStore();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (store.selectedProduct) {
-      store.updateProduct();
-      toast({
-        title: 'Product updated.',
-        description: "We've updated your product.",
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-      });
-    } else {
-      store.addProduct();
-      toast({
-        title: 'Product added.',
-        description: "We've added your product.",
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-      });
-    }
-    store.selectedProduct = null;
+  const validateForm = () => {
+    const requiredFields = ['name', 'price', 'description'];
+    const isValid = requiredFields.every(
+      (field) => store.selectedProduct?.[field]
+    );
+    !isValid && toastError('Please fill in all fields');
+    return isValid;
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const isFormValid = validateForm();
+    if (isFormValid && store.selectedProduct) {
+      store.saveProduct(store.selectedProduct);
+      onClose();
+    }
+  };
+
+  const formFieldNames = ['name', 'price', 'category', 'description'];
+  const formHasChanges = store.hasChanges();
+  const isUpdate = Boolean(store.selectedProduct?.id);
+
   return (
-    <Box mx="auto" minW="40%" as="form" onSubmit={handleSubmit} p={4}>
-      <ProductFormField
-        label="Name"
-        value={store.productDetails.name}
-        onChange={(e) => store.setProductName(e.target.value)}
-        placeholder="Name"
-        isRequired
-        type="text"
-      />
-      <ProductFormField
-        label="Price"
-        value={store.productDetails.price}
-        onChange={(e) => store.setProductPrice(e.target.value)}
-        placeholder="Price"
-        isRequired
-        type="number"
-      />
-      <ProductFormField
-        label="Description"
-        value={store.productDetails.description}
-        onChange={(e) => store.setProductDescription(e.target.value)}
-        placeholder="Description"
-        isRequired
-        type="text"
-      />
-      <Button mt={6} colorScheme="blue" type="submit">
-        {store.selectedProduct ? 'Save' : 'Add Product'}
+    <Box as="form" mx="auto" minW="40%" p={4} onSubmit={handleSubmit}>
+      {formFieldNames.map((field) => (
+        <FormField
+          key={field}
+          name={field}
+          label={field.charAt(0).toUpperCase() + field.slice(1)}
+          placeholder={`Enter ${field}`}
+          type={field === 'description' ? 'textarea' : 'text'}
+        />
+      ))}
+      <Button
+        mt={6}
+        colorScheme="blue"
+        type="submit"
+        disabled={!formHasChanges}
+      >
+        {isUpdate ? 'Update' : 'Save'}
       </Button>
     </Box>
   );
