@@ -158,7 +158,7 @@ class ProductStore {
         name: productDetails.name!,
         price: productDetails.price!,
         description: productDetails.description!,
-        category: productDetails.category || '', // Якщо категорія не вказана, використовуємо пустий рядок
+        category: productDetails.category || '',
       };
       this.products.push(newProduct);
       toastSuccess('Product added successfully.');

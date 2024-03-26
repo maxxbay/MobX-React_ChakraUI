@@ -1,4 +1,4 @@
-import React, { FormEvent } from 'react';
+import React, { FormEvent, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Box, Button } from '@chakra-ui/react';
 import { useProductStore } from '../store/ProductStoreContext';
@@ -9,6 +9,18 @@ import { Product } from '../types';
 const ProductForm: React.FC<{ onClose?: () => void }> = observer(
   ({ onClose }) => {
     const store = useProductStore();
+
+    useEffect(() => {
+      if (!store.selectedProduct) {
+        store.selectedProduct = {
+          id: '',
+          name: '',
+          price: null,
+          category: '',
+          description: '',
+        };
+      }
+    });
 
     const validateForm = (): boolean => {
       const requiredFields = ['name', 'price', 'category', 'description'];
